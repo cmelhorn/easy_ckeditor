@@ -5,7 +5,7 @@ John Bradley
 
 http://johnmichaelbradley.com/
 
-I am going to leave Gaston's README intact for the most part, obvious changes excepted.
+I am going to leave Gaston's README intact for the most part, obvious changes excepted. I just started the conversion process, so wait for my go-ahead to use this plugin.
 
 
 Easy CKEditor Rails plugin

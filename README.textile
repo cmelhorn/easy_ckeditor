@@ -1,4 +1,14 @@
-Easy FCKEditor Rails plugin
+Easy CKEditor Rails plugin
+===========================
+
+John Bradley
+
+http://johnmichaelbradley.com/
+
+I am going to leave Gaston's README intact for the most part, obvious changes excepted.
+
+
+Easy CKEditor Rails plugin
 ===========================
 
 **Gast&oacute;n Ramos**
@@ -7,9 +17,9 @@ ramos.gaston [at] gmail [dot] com
 
 http://gastonramos.wordpress.com/
 
-**Easy FCKEditor is a Rails Plugin thats generate a WYSIWYG text editor helper**. This version is a fork of Scott Rutherford [great plugin](http://blog.caronsoftware.com/2007/11/16/fckeditor-plugin-0-4-2-released) with a [EasyUpload plugin](http://martinezdelizarrondo.com/easyupload/) inlcuded of Alfonso Mart&iacute;nez de Lizarrondo.
+**Easy CKEditor is a Rails Plugin thats generate a WYSIWYG text editor helper**. This version is a fork of Scott Rutherford [great plugin](http://blog.caronsoftware.com/2007/11/16/Ckeditor-plugin-0-4-2-released) with a [EasyUpload plugin](http://martinezdelizarrondo.com/easyupload/) inlcuded of Alfonso Mart&iacute;nez de Lizarrondo.
 
-This plugin installs the FCKeditor editor into your rails app, along with some helpers to use in your views.
+This plugin installs the CKeditor editor into your rails app, along with some helpers to use in your views.
 
 Features
 ========
@@ -23,20 +33,20 @@ Versions
 
 This plugin is tested with:
 
-  * Rails 2.2 and 2.3
-  * Ruby 1.8.6 Patchlevel 114
-  * FCKeditor 2.6.3
+  * Rails 2.3
+  * Ruby 1.8.6 Patchlevel 287
+  * CKeditor 3.0
 
 Install
 =======
 
 If you got this using:
 
-ruby script/plugin install git://github.com/gramos/easy-fckeditor.git
+ruby script/plugin install git://github.com/johnmichaelbradley/easy-ckeditor.git
 
 Then the install should of copied all the appropriate files to their homes. If you download a tar then you can either do
 
-  rake fckeditor:install
+  rake ckeditor:install
 
 from the root of your app, or the file will be installed the first time you startup after untaring the plugin.
 
@@ -45,31 +55,31 @@ Uninstall
 
 Then the install should run task:
 
-  rake fckeditor:uninstall
+  rake ckeditor:uninstall
 
 and all the installed files will be removed.
 
 Files
 =====
 
-Basically the whole of the FCKeditor suite is copied to: public/javascripts/fckeditor
+Basically the whole of the CKeditor suite is copied to: public/javascripts/ckeditor
 
-There is a separate config file copied to: public/javascripts/fckcustom.js, that you can use to customize the install. This file is never overriden by upgrades or reinstalls
+There is a separate config file copied to: public/javascripts/ckcustom.js, that you can use to customize the install. This file is never overriden by upgrades or reinstalls
 
 IMPORTANT
 =========
 
 If you are hosting your rails app in a subdirectory you need to open:
 
-  public/javascripts/fckcustom.js
+  public/javascripts/ckcustom.js
 
-and modify the FCKRelativePath = ''; to suite your needs.
+and modify the CKRelativePath = ''; to suite your needs.
 
 For example if I have an app at www.mydomain.com/app/
 
 then the line should read:
 
-  FCKRelativePath = '/app';
+  CKRelativePath = '/app';
 
 
 Usage
@@ -77,15 +87,15 @@ Usage
 
 Basically include this in the page you wish to use the editor in
 
-  <%= javascript_include_tag :fckeditor %>
+  <%= javascript_include_tag :ckeditor %>
 
 Then instead of the normal textarea helper from Rails use this one
 
-  <% = fckeditor_textarea("object", "field", :toolbarSet => 'Simple', :width => '100%', :height => '200px') %>
+  <% = ckeditor_textarea("object", "field", :toolbarSet => 'Simple', :width => '100%', :height => '200px') %>
 
 and for use **Easy toolbar** with **EasyUpload plugin**
 
- <% = fckeditor_textarea("object", "field", :toolbarSet => 'Easy', :width => '100%', :height => '200px') %>
+ <% = ckeditor_textarea("object", "field", :toolbarSet => 'Easy', :width => '100%', :height => '200px') %>
 
 Thats it unless you are using AJAX
 
@@ -95,29 +105,29 @@ AJAX
 To use a remote form you need to do something like this
 
   <%= form_remote_tag :url => @options.merge(:controller => @scaffold_controller),
-                    :before => fckeditor_before_js('note', 'text') %>
+                    :before => Ckeditor_before_js('note', 'text') %>
 
-    <%= fckeditor_textarea( "note", "text", :ajax => true ) %>
+    <%= ckeditor_textarea( "note", "text", :ajax => true ) %>
 
   <%= end_form_tag %>
 
-If you forget to put in the :before it won't work, you can also use the fckeditor_form_remote_tag described below
+If you forget to put in the :before it won't work, you can also use the Ckeditor_form_remote_tag described below
 
 Multiple Editors in a form
 ==========================
 
-To create a form using multiple editors use the fckeditor_form_remote_tag helper and pass the :editors option. This takes an hash of model symbol keys with each having
+To create a form using multiple editors use the Ckeditor_form_remote_tag helper and pass the :editors option. This takes an hash of model symbol keys with each having
 an array as its value. The array should contain the list of fields that will have editors attached to them.
 
-  <%= fckeditor_form_remote_tag :url => @options.merge(:controller => @scaffold_controller),
+  <%= ckeditor_form_remote_tag :url => @options.merge(:controller => @scaffold_controller),
                               :editors => { :multinote => ['text1', 'text2'] } %>
 
-    <%= fckeditor_textarea( "multinote", "text1", :ajax => true ) %>
-    <%= fckeditor_textarea( "multinote", "text2", :ajax => true ) %>
+    <%= ckeditor_textarea( "multinote", "text1", :ajax => true ) %>
+    <%= ckeditor_textarea( "multinote", "text2", :ajax => true ) %>
 
   <%= end_form_tag %>
 
-There is also a fckeditor_remote_form_for version.
+There is also a ckeditor_remote_form_for version.
 
 Spell Check
 ===========
@@ -126,9 +136,9 @@ Basically ensure you have aspell installed and available in your path. If runnin
 
   'c:\program files\aspell\bin\aspell'
 
-If you install elsewhere then you will need to update spell_check.rb in the plugin to mirror your path. Also make sure you have this line in your fckcustom.js file:
+If you install elsewhere then you will need to update spell_check.rb in the plugin to mirror your path. Also make sure you have this line in your ckcustom.js file:
 
-  FCKConfig.SpellChecker = 'SpellerPages';
+  CKConfig.SpellChecker = 'SpellerPages';
 
 
 Contribute
@@ -136,5 +146,5 @@ Contribute
 
 There is a lighthouseapp account if you want to send a patch or report a bug
 
-http://easy_fckeditor.lighthouseapp.com/projects/27883-easy-fckeditor/overview
+http://easy_Ckeditor.lighthouseapp.com/projects/27883-easy-Ckeditor/overview
 

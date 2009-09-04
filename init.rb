@@ -1,34 +1,34 @@
 # Include hook code here
-require 'fckeditor'
-require 'fckeditor_version'
-require 'fckeditor_file_utils'
+require 'ckeditor'
+require 'ckeditor_version'
+require 'ckeditor_file_utils'
 
-FckeditorFileUtils.check_and_install
+CkeditorFileUtils.check_and_install
 
 # make plugin controller available to app
-config.load_paths += %W(#{Fckeditor::PLUGIN_CONTROLLER_PATH} #{Fckeditor::PLUGIN_HELPER_PATH})
+config.load_paths += %W(#{Ckeditor::PLUGIN_CONTROLLER_PATH} #{Ckeditor::PLUGIN_HELPER_PATH})
 
 Rails::Initializer.run(:set_load_path, config)
 
-ActionView::Base.send(:include, Fckeditor::Helper)
+ActionView::Base.send(:include, Ckeditor::Helper)
 
 # require the controller
-require 'fckeditor_controller'
+require 'ckeditor_controller'
 
 # add a route for spellcheck
 class ActionController::Routing::RouteSet
-  unless (instance_methods.include?('draw_with_fckeditor'))
+  unless (instance_methods.include?('draw_with_ckeditor'))
     class_eval <<-"end_eval", __FILE__, __LINE__  
-      alias draw_without_fckeditor draw
-      def draw_with_fckeditor
-        draw_without_fckeditor do |map|
-          map.connect 'fckeditor/check_spelling', :controller => 'fckeditor', :action => 'check_spelling'
-          map.connect 'fckeditor/command', :controller => 'fckeditor', :action => 'command'
-          map.connect 'fckeditor/upload', :controller => 'fckeditor', :action => 'upload'
+      alias draw_without_ckeditor draw
+      def draw_with_ckeditor
+        draw_without_ckeditor do |map|
+          map.connect 'ckeditor/check_spelling', :controller => 'ckeditor', :action => 'check_spelling'
+          map.connect 'ckeditor/command', :controller => 'ckeditor', :action => 'command'
+          map.connect 'ckeditor/upload', :controller => 'ckeditor', :action => 'upload'
           yield map
         end
       end
-      alias draw draw_with_fckeditor
+      alias draw draw_with_ckeditor
     end_eval
   end
 end

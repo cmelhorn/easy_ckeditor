@@ -1,3 +1,5 @@
+0.9.0 - Replaced FCKeditor with CKEditor
+
 0.8.1 - Remove plugin files on uninstall
 
 0.8.0 - Added uninstall rake task

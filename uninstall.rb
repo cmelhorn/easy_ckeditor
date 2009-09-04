@@ -1,8 +1,8 @@
-directory = File.join(RAILS_ROOT, '/vendor/plugins/easy-fckeditor/')
-require "#{directory}lib/fckeditor_file_utils"
-require "#{directory}lib/fckeditor_version"
-require "#{directory}lib/fckeditor"
+directory = File.join(RAILS_ROOT, '/vendor/plugins/easy-ckeditor/')
+require "#{directory}lib/ckeditor_file_utils"
+require "#{directory}lib/ckeditor_version"
+require "#{directory}lib/ckeditor"
 
-puts "** Uninstalling Easy FCKEditor Plugin version #{FckeditorVersion.current}...."
+puts "** Uninstalling Easy CKEditor Plugin version #{CkeditorVersion.current}...."
 
-FckeditorFileUtils.destroy
+CkeditorFileUtils.destroy

@@ -7,26 +7,26 @@ require 'find'
 desc 'Default: run unit tests.'
 task :default => :test
 
-desc 'Test the fckeditor plugin.'
+desc 'Test the ckeditor plugin.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib'
   t.pattern = 'test/**/*_test.rb'
   t.verbose = true
 end
 
-desc 'Generate documentation for the fckeditor plugin.'
+desc 'Generate documentation for the ckeditor plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'Fckeditor'
+  rdoc.title    = 'Ckeditor'
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
 
 # Globals
-require 'lib/fckeditor_version'
-PKG_NAME = 'fckeditor_plugin'
-PKG_VERSION = FckeditorVersion.current
+require 'lib/ckeditor_version'
+PKG_NAME = 'ckeditor_plugin'
+PKG_VERSION = CkeditorVersion.current
 
 PKG_FILES = ['README', 'CHANGELOG', 'init.rb', 'install.rb']
 PKG_DIRECTORIES = ['app/', 'lib/', 'public/', 'tasks/', 'test/']
@@ -53,15 +53,15 @@ begin
 
   spec = Gem::Specification.new do |s|
           s.platform = Gem::Platform::RUBY
-          s.summary = "FCKeditor plugin for Rails"
+          s.summary = "CKeditor plugin for Rails"
           s.name = PKG_NAME
           s.version = PKG_VERSION
           s.requirements << 'none'
           s.files = PKG_FILES
-          s.description = "Adds FCKeditor helpers and code to Rails application"
+          s.description = "Adds CKeditor helpers and code to Rails application"
   end
 
-  desc "Create gem package for FCKeditor plugin"
+  desc "Create gem package for CKeditor plugin"
   task :package_gem
   Rake::GemPackageTask.new(spec) do |pkg|
           pkg.need_zip = true

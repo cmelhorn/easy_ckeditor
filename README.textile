@@ -5,11 +5,13 @@ John Bradley
 
 http://johnmichaelbradley.com/
 
+This is my first foray into public Rails development, so please bear with me and help me out if you can. Thanks!
+
 I am going to leave Gaston's README intact for the most part, obvious changes excepted. The conversion process is done, now it's time to patch up the differences between
 FCK- and CKeditor.
 
 I've added basic support for a configuration YAML file (RAILS_ROOT/config/ckeditor.yml). It's very simple right now. This file is not entirely needed yet, but if
-you plan to use the file manager, you will need this to set file_manager_uri and _upload_uri.
+you plan to use a file manager, you will need this to set file_manager_uri and _upload_uri. In all honesty, this won't work yet.
 
 ckeditor.yml example:
 development:
@@ -19,6 +21,8 @@ development:
   file_manager_upload_uri: '/ckeditor/upload'
 production:
   ...
+
+It should be noted that there are a lot of features from FCKeditor that either haven't been implemented in CKeditor yet or will never be implemented in CKeditor.
 
 Easy CKEditor Rails plugin
 ===========================
@@ -35,10 +39,9 @@ This plugin installs the CKeditor editor into your rails app, along with some he
 
 Features
 ========
+#--> John: more to come.
 
    * WYSIWYG text editor helper.
-   * 2 configurable versions of upload images module (easy and complete).
-   * Easy link maker.
 
 Versions
 ========

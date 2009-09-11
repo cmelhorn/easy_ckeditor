@@ -2,7 +2,7 @@
 module Ckeditor
   begin
     CONFIG = YAML.load_file("#{RAILS_ROOT}/config/ckeditor.yml")[RAILS_ENV]
-  rescue Errno::ENOENT
+  rescue => e
     CONFIG = nil
   end
   PLUGIN_NAME = 'easy-ckeditor'

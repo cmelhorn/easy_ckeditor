@@ -4,8 +4,7 @@ require 'tmpdir'
 class CkeditorController < ActionController::Base
 
   UPLOAD_FOLDER = "/uploads"
-
-  UPLOADED_ROOT = RAILS_ROOT + "/public" + UPLOAD_FOLDER
+  UPLOAD_ROOT = RAILS_ROOT + "/public" + UPLOAD_FOLDER
 
   MIME_TYPES = [
     "image/jpg",
@@ -22,8 +21,8 @@ class CkeditorController < ActionController::Base
   RXML = <<-EOL
   xml.instruct!
     #=> <?xml version="1.0" encoding="utf-8" ?>
-  xml.Connector("command" => params[:Command], "resourceType" => 'File') do
-    xml.CurrentFolder("url" => @ck_url, "path" => params[:CurrentFolder])
+  xml.Connector("command" => params[:command], "resourceType" => 'File') do
+    xml.CurrentFolder("url" => @ck_url, "path" => params[:currentFolder])
     xml.Folders do
       @folders.each do |folder|
         xml.Folder("name" => folder)
@@ -42,15 +41,18 @@ class CkeditorController < ActionController::Base
   # figure out who needs to handle this request
   #
   def command
-    if params[:Command] == 'GetFoldersAndFiles' || params[:Command] == 'GetFolders'
+    if params[:command] == 'CheckAuthentication'
+      return true
+    end
+    if params[:command] == 'GetFoldersAndFiles' || params[:command] == 'GetFolders'
       get_folders_and_files
-    elsif params[:Command] == 'CreateFolder'
+    elsif params[:command] == 'CreateFolder'
       create_folder
-    elsif params[:Command] == 'FileUpload'
+    elsif params[:command] == 'FileUpload'
       upload_file
     end
 
-    render :inline => RXML, :type => :rxml unless params[:Command] == 'FileUpload'
+    render :inline => RXML, :type => :rxml unless params[:command] == 'FileUpload'
   end
 
   def get_folders_and_files(include_files = true)
@@ -73,10 +75,10 @@ class CkeditorController < ActionController::Base
   def create_folder
     begin
       @ck_url = current_directory_path
-      path = @ck_url + params[:NewFolderName]
+      path = @ck_url + params[:newFolderName]
       if !(File.stat(@ck_url).writable?)
         @errorNumber = 103
-      elsif params[:NewFolderName] !~ /[\w\d\s]+/
+      elsif params[:newFolderName] !~ /[\w\d\s]+/
         @errorNumber = 102
       elsif FileTest.exists?(path)
         @errorNumber = 101
@@ -107,25 +109,12 @@ class CkeditorController < ActionController::Base
     self.upload_file
   end
 
-  include ActionView::Helpers::SanitizeHelper
-
-  def check_spelling
-    require 'cgi'
-    require 'ckeditor_spell_check'
-
-    @original_text = params[:textinputs] ? params[:textinputs].first : ''
-    plain_text = strip_tags(CGI.unescape(@original_text))
-    @words = CkeditorSpellCheck.check_spelling(plain_text)
-
-    render :file => "#{Ckeditor::PLUGIN_VIEWS_PATH}/ckeditor/spell_check.rhtml"
-  end
-
   #################################################################################
   #
   private
 
   def load_file_from_params
-    @new_file = check_file(params[:NewFile])
+    @new_file = check_file(params[:newFile])
     @ck_url  = upload_directory_path
     @ftype     = @new_file.content_type.strip
     log_upload
@@ -176,7 +165,7 @@ class CkeditorController < ActionController::Base
   # Puts some data in the current log
   #
   def log_upload
-    log "CKEDITOR - #{params[:NewFile]}"
+    log "CKEDITOR - #{params[:newFile]}"
     log "CKEDITOR - UPLOAD_FOLDER: #{UPLOAD_FOLDER}"
     log "CKEDITOR - #{File.expand_path(RAILS_ROOT)}/public#{UPLOAD_FOLDER}/" +
         "#{@new_file.original_filename}"
@@ -186,18 +175,18 @@ class CkeditorController < ActionController::Base
   # Returns the filesystem folder with the current folder
   #
   def current_directory_path
-    base_dir = "#{UPLOADED_ROOT}/#{params[:Type]}"
+    base_dir = "#{UPLOAD_ROOT}/#{UPLOAD_FOLDER}/#{params[:type]}"
     Dir.mkdir(base_dir,0775) unless File.exists?(base_dir)
-    check_path("#{base_dir}#{params[:CurrentFolder]}")
+    check_path("#{base_dir}#{params[:currentFolder]}")
   end
 
   ##############################################################################
   # Returns the upload url folder with the current folder
   #
   def upload_directory_path
-    url_root = ActionController::AbstractRequest.relative_url_root.to_s
+    url_root = ActionController::Base.relative_url_root.to_s
     uploaded = url_root + "#{UPLOAD_FOLDER}/#{params[:Type]}"
-    "#{uploaded}#{params[:CurrentFolder]}"
+    "#{uploaded}#{params[:currentFolder]}"
   end
 
   ##############################################################################
@@ -222,7 +211,7 @@ class CkeditorController < ActionController::Base
 
   def check_path(path)
     exp_path = File.expand_path path
-    if exp_path !~ %r[^#{File.expand_path(RAILS_ROOT)}/public#{UPLOAD_FOLDER}]
+    if exp_path !~ %r[^#{File.expand_path(UPLOAD_ROOT)}]
       @errorNumber = 403
       throw Exception.new
     end

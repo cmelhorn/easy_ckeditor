@@ -15,14 +15,12 @@ ActionView::Base.send(:include, Ckeditor::Helper)
 # require the controller
 require 'ckeditor_controller'
 
-# add a route for spellcheck
 class ActionController::Routing::RouteSet
   unless (instance_methods.include?('draw_with_ckeditor'))
     class_eval <<-"end_eval", __FILE__, __LINE__  
       alias draw_without_ckeditor draw
       def draw_with_ckeditor
         draw_without_ckeditor do |map|
-          map.connect 'ckeditor/check_spelling', :controller => 'ckeditor', :action => 'check_spelling'
           map.connect 'ckeditor/command', :controller => 'ckeditor', :action => 'command'
           map.connect 'ckeditor/upload', :controller => 'ckeditor', :action => 'upload'
           yield map

@@ -1,7 +1,7 @@
 module CkeditorVersion
   MAJOR = 0
-  MINOR = 8
-  RELEASE = 1
+  MINOR = 9
+  RELEASE = 0
 
   def self.current
     "#{MAJOR}.#{MINOR}.#{RELEASE}"

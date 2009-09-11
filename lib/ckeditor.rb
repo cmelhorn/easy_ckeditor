@@ -1,11 +1,19 @@
 # Ckeditor
 module Ckeditor
+  begin
+    CONFIG = YAML.load_file("#{RAILS_ROOT}/config/ckeditor.yml")
+  rescue Errno::ENOENT
+    CONFIG = nil
+  end
   PLUGIN_NAME = 'easy-ckeditor'
   PLUGIN_PATH = "#{RAILS_ROOT}/vendor/plugins/#{PLUGIN_NAME}"
-  PLUGIN_PUBLIC_PATH = "#{PLUGIN_PATH}/public"
+  PLUGIN_PUBLIC_PATH = CONFIG.blank? ? "#{RAILS_ROOT}/public/uploads" : CONFIG['public_path'].blank? ? "" : CONFIG['public_path']
+  PLUGIN_PUBLIC_URI = CONFIG.blank? ? "/uploads" : CONFIG['public_uri'].blank? ? "" : CONFIG['public_uri']
   PLUGIN_CONTROLLER_PATH = "#{PLUGIN_PATH}/app/controllers"
   PLUGIN_VIEWS_PATH = "#{PLUGIN_PATH}/app/views"
   PLUGIN_HELPER_PATH = "#{PLUGIN_PATH}/app/helpers"
+  PLUGIN_FILE_MANAGER_URI = CONFIG.blank? ? "" : CONFIG['file_manager_uri'].blank? ? "" : CONFIG['file_manager_uri']
+  PLUGIN_FILE_MANAGER_UPLOAD_URI = CONFIG.blank? ? "" : CONFIG['file_manager_upload_uri'].blank? ? "" : CONFIG['file_manager_upload_uri']
 
   module Helper
     def ckeditor_textarea(object, field, options = {})
@@ -20,11 +28,13 @@ module Ckeditor
       end
       id = ckeditor_element_id(object, field)
 
-      cols = options[:cols].nil? ? '' : "cols='"+options[:cols]+"'"
-      rows = options[:rows].nil? ? '' : "rows='"+options[:rows]+"'"
+      cols = options[:cols].nil? ? "cols='20'" : "cols='"+options[:cols]+"'"
+      rows = options[:rows].nil? ? "rows='20'" : "rows='"+options[:rows]+"'"
 
       width = options[:width].nil? ? '100%' : options[:width]
       height = options[:height].nil? ? '100%' : options[:height]
+
+      classy = options[:class].nil? ? '' : "class='#{options[:class]}'"
 
       toolbarSet = options[:toolbarSet].nil? ? 'Default' : options[:toolbarSet]
 
@@ -32,16 +42,17 @@ module Ckeditor
         inputs = "<input type='hidden' id='#{id}_hidden' name='#{object}[#{field}]'>\n" <<
                  "<textarea id='#{id}' #{cols} #{rows} name='#{id}'>#{value}</textarea>\n"
       else
-        inputs = "<textarea id='#{id}' #{cols} #{rows} name='#{object}[#{field}]'>#{value}</textarea>\n"
+        inputs = "<textarea id='#{id}' style='width:#{width};height:#{height}' #{cols} #{rows} #{classy} name='#{object}[#{field}]'>#{h value}</textarea>\n"
       end
 
       js_path = "#{controller.relative_url_root}/javascripts"
       base_path = "#{js_path}/ckeditor/"
       return inputs <<
-        javascript_tag("var oCKeditor = new CKeditor('#{id}', '#{width}', '#{height}', '#{toolbarSet}');\n" <<
-                       "oCKeditor.BasePath = \"#{base_path}\"\n" <<
-                       "oCKeditor.Config['CustomConfigurationsPath'] = '#{js_path}/ckcustom.js';\n" <<
-                       "oCKeditor.ReplaceTextarea();\n")
+        javascript_tag("CKEDITOR.replace('#{object}[#{field}]', {
+    filebrowserBrowseUrl : '#{PLUGIN_FILE_MANAGER_URI}',
+    filebrowserUploadUrl : '#{PLUGIN_FILE_MANAGER_UPLOAD_URI}'
+
+});\n")
     end
 
     def ckeditor_form_remote_tag(options = {})
@@ -76,7 +87,8 @@ module Ckeditor
 
     def ckeditor_before_js(object, field)
       id = ckeditor_element_id(object, field)
-      "var oEditor = CKeditorAPI.GetInstance('"+id+"'); document.getElementById('"+id+"_hidden').value = oEditor.GetXHTML();"
+      "var oEditor = CKEDITOR.instances.#{id}.getData();"
+
     end
   end
 end
